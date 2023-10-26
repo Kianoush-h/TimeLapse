@@ -12,51 +12,32 @@ Email: haratiank2@gmail.com
 
 
 
-
-
-
-import cv2
 import os
+import imageio
 
-# Path to the folder containing the images
-folder_path = '20231025_dayLight'
+# Folder containing the images
+image_folder = '20231025_dayLight'
 
-# Getting the list of image file names in the folder
-images = [img for img in os.listdir(folder_path) if img.endswith(".jpg")]
+# List of images in the folder
+images = [img for img in os.listdir(image_folder) if img.endswith(".jpg")]  # Change the extension as required
 
-# Sorting the images based on their names
-images.sort(key=lambda x: int(x.split('.')[0]))
+# Sort the images based on their names to ensure proper sequence
+# images = sorted(images, key=lambda x: int(os.path.splitext(x)[0]))
 
-# Setting the frame size and frames per second for the video
-frame_width, frame_height = 1280, 720
-fps = 10
-video_name = 'timelapse_video_20231025_dayLight.mp4'  # Change the extension to the desired format, e.g., .avi, .mkv, .mov
-
-# Initializing the video writer
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Change to the appropriate codec for your desired format
-out = cv2.VideoWriter(video_name, fourcc, fps, (frame_width, frame_height))
+# Initialize the writer
+video_name = 'timelapse_output.mp4'
+writer = imageio.get_writer(video_name, fps=1/0.05)  # Adjust the fps as needed
 
 # Loop through the images and add them to the video
 for image in images:
-    image_path = os.path.join(folder_path, image)
-    frame = cv2.imread(image_path)
-    out.write(frame)
+    img_path = os.path.join(image_folder, image)
+    if os.path.isfile(img_path):
+        writer.append_data(imageio.imread(img_path))
 
-# Release the video writer and destroy any open CV windows
-out.release()
-cv2.destroyAllWindows()
-print("Timelapse video has been created successfully.")
+# Close the writer
+writer.close()
 
-
-
-
-
-
-
-
-
-
-
+print(f'Timelapse video saved as {video_name}')
 
 
 
